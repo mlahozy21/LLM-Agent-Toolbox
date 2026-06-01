@@ -1,0 +1,3 @@
+numpy>=1.24
+# optional, for real neural embeddings instead of the offline fallback:
+# sentence-transformers>=2.2

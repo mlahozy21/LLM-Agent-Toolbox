@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-toolbox"
+version = "0.1.0"
+description = "Building blocks for LLM multi-agent systems: semantic tool selection and a blackboard coordination primitive."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Marcos Lahoz" }]
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+neural = ["sentence-transformers>=2.2"]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
