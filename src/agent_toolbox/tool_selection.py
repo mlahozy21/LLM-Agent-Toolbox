@@ -36,7 +36,10 @@ class ToolSelector:
         """Return the top-k (tool, similarity) for a query, highest first."""
         q = self.embedder.encode([query])[0]
         sims = self._matrix @ q                       # cosine (rows are normalised)
-        order = np.argsort(sims)[::-1][:k]
+        # Stable, deterministic ordering: argsort on -sims with a stable kind so
+        # ties are broken by original tool order (registration order) rather than
+        # the arbitrary order that reversing an ascending argsort produces.
+        order = np.argsort(-sims, kind="stable")[:k]
         return [(self.tools[i], float(sims[i])) for i in order]
 
     def select_names(self, query: str, k: int = 3) -> list[str]:

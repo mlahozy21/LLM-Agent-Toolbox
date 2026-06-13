@@ -31,9 +31,19 @@ recall@3 = 0.80**; a neural encoder pushes this higher.
 ## 2. Blackboard coordination
 
 `Blackboard` is a thread-safe shared workspace; agents read/write structured
-entries instead of messaging each other directly. A `Controller` runs the agents
+entries instead of messaging each other directly. All operations — including
+reading the change `log` — are serialised by a single lock, so concurrent agents
+never race (covered by a multi-threaded test). A `Controller` runs the agents
 to **quiescence** (until none can contribute), which naturally resolves
 dependencies between them.
+
+**Termination contract.** The controller fires every ready agent once per round
+and stops when a full round produces no new work. For this to terminate, acting
+must be effectively *idempotent*: once an agent has contributed, its `can_act`
+should return `False` on the resulting state. An agent whose `can_act` never
+becomes `False` would loop forever, so the controller caps the loop at
+`max_rounds` (default 50) and emits a `RuntimeWarning` (or raises, with
+`run(raise_on_max_rounds=True)`) if quiescence is not reached.
 
 `scripts/blackboard_demo.py` shows a trip-planning workflow where a weather agent,
 a packing agent (depends on weather) and a summary agent (depends on both)
@@ -55,20 +65,4 @@ pytest                            # test suite
 ```
 .
 ├── src/agent_toolbox/
-│   ├── embeddings.py       # sentence-transformers backend + offline fallback
-│   ├── tool_selection.py   # ToolSelector: top-k tools by semantic similarity
-│   ├── blackboard.py       # Blackboard + Agent + Controller (run to quiescence)
-│   └── demo_data.py        # small tool registry + labelled queries
-├── scripts/                # evaluate.py, blackboard_demo.py
-└── tests/                  # tool-selection and blackboard tests
-```
-
-## Context
-
-Built around the questions I study in my M2 internship on LLM multi-agent
-systems: inter-agent communication (blackboard / shared workspaces) and tool
-engagement/invocation under a limited context budget.
-
-## License
-
-Released under the MIT License — see `LICENSE`.
+│   ├── embeddings.py       # sentence-transformers backend + offline fallba
