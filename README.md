@@ -65,4 +65,20 @@ pytest                            # test suite
 ```
 .
 ├── src/agent_toolbox/
-│   ├── embeddings.py       # sentence-transformers backend + offline fallba
+│   ├── embeddings.py       # sentence-transformers backend + offline fallback
+│   ├── tool_selection.py   # ToolSelector: top-k tools by semantic similarity
+│   ├── blackboard.py       # Blackboard + Agent + Controller (run to quiescence)
+│   └── demo_data.py        # small tool registry + labelled queries
+├── scripts/                # evaluate.py, blackboard_demo.py
+└── tests/                  # tool-selection and blackboard tests
+```
+
+## Context
+
+Built around the questions I study in my M2 internship on LLM multi-agent
+systems: inter-agent communication (blackboard / shared workspaces) and tool
+engagement/invocation under a limited context budget.
+
+## License
+
+Released under the MIT License — see `LICENSE`.
